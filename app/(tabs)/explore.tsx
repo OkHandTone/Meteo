@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function TabTwoScreen() {
-  // const [city, setCity] = useState("Lille");
-  const [city, setCity] = useState<any>(null);
+  const [city, setCity] = useState("Lille");
+  // const [city, setCity] = useState<any>(null);
   const [weather, setWeather] = useState<any>(null);
   const { search } = useLocalSearchParams(); 
   const API_KEY = "86b213e747384342a67150923263001";
@@ -43,18 +43,23 @@ export default function TabTwoScreen() {
 
   const jours = weather.forecast.forecastday;
 
-  const getNomJour = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long' };
+const getNomJour = (dateStr: string) => {
+    const date = new Date(dateStr + 'T12:00:00');
+    const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
     const nom = date.toLocaleDateString('fr-FR', options); 
     return nom.charAt(0).toUpperCase() + nom.slice(1);
-  };
+};
 
   return (
     <ScrollView style={styles.page}>
 
       <View style={styles.banner}>
-        <Text style={styles.titre}>{weather.location.name}</Text>
+        <View>
+    <Text style={styles.titre}>{weather.location.name}</Text>
+    <Text style={{ color: '#004D40', fontSize: 14 }}>
+      Heure locale : {weather.location.localtime.split(' ')[1]}
+    </Text>
+  </View>
         <TextInput
           style={styles.rechercher}
           placeholder="Rechercher 🔎"

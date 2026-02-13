@@ -1,6 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function TabTwoScreen() {
   const [city, setCity] = useState("Lille");
@@ -43,6 +44,26 @@ export default function TabTwoScreen() {
 
   const jours = weather.forecast.forecastday;
 
+
+  // IIIIIIIICCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+
+const addToFavorites = async () => {
+    try {
+      const existingFavs = await AsyncStorage.getItem('favorites');
+      let newFavs = existingFavs ? JSON.parse(existingFavs) : [];
+
+      if (!newFavs.includes(city)) {
+        newFavs.push(city);
+        await AsyncStorage.setItem('favorites', JSON.stringify(newFavs));
+        console.log("Ville ajoutée aux favoris");
+      } else {
+        console.log("Ville déjà dans les favoris");
+      }
+    } catch (e) {
+      console.error("Erreur lors de l'ajout aux favoris", e);
+    }
+  };
+
 const getNomJour = (dateStr: string) => {
     const date = new Date(dateStr + 'T12:00:00');
     const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
@@ -59,6 +80,12 @@ const getNomJour = (dateStr: string) => {
     <Text style={{ color: '#004D40', fontSize: 14 }}>
       Heure locale : {weather.location.localtime.split(' ')[1]}
     </Text>
+
+    <TouchableOpacity onPress={addToFavorites}>
+                <Text style={{color: '#E65100', fontWeight: 'bold', marginTop: 5}}>★ Ajouter aux favoris</Text>
+    </TouchableOpacity>
+
+
   </View>
         <TextInput
           style={styles.rechercher}
